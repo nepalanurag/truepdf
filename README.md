@@ -1,16 +1,16 @@
 # TruePDF
 
-Free browser-based tools. 32 tools, zero signup, zero uploads: every file is processed locally in the visitor's browser and never touches a server.
+Free browser-based tools. 39 tools, zero signup, zero uploads: every file is processed locally in the visitor's browser and never touches a server.
 
 Live site: https://truepdf.vercel.app/
 
 ## Tools
 
-**PDF** (9): Merge PDF, Split PDF, Images to PDF, Compress PDF, PDF to JPG, Redact PDF, Sign PDF, Unlock PDF, PDF to Word
+**PDF** (15): PDF Editor, Images to PDF, Compress PDF, PDF to JPG, Redact PDF, Sign PDF, Unlock PDF, PDF to Word, OCR PDF, Extract Images, Extract Text, Edit PDF Metadata, Fill PDF Form, Flatten PDF, Repair PDF
 
 **Image** (5): Image compressor, Image converter, Background remover, Image OCR, Image tracer
 
-**Media** (7): Audio trimmer, Audio merger, Audio converter, Video compressor, Video trimmer, Video converter, Screen recorder
+**Media** (8): Audio trimmer, Audio merger, Audio converter, Video compressor, Video trimmer, Video converter, Subtitle editor, Screen recorder
 
 **Business** (3): Invoice generator, Email signature generator, Business profile
 
@@ -28,7 +28,7 @@ No accounts, no cookies, no server-side processing. Optional analytics uses Goat
 
 ## Tech
 
-Astro 5 static site, TypeScript. Heavy lifting is client-side: pdf-lib, pdf.js, Pyodide (pypdf) for Unlock PDF, FFmpeg WASM for media tools, Tesseract.js for OCR, @imgly/background-removal.
+Astro 5 static site, TypeScript. Heavy lifting is client-side: pdf-lib, pdf.js, Pyodide (pypdf) for Unlock PDF, FFmpeg WASM for media tools, Tesseract.js for OCR, BiRefNet Lite (onnxruntime-web) for background removal.
 
 ## Local development
 
@@ -46,20 +46,16 @@ npm run verify
 
 ## Deployment
 
-Pushes to `main` trigger `.github/workflows/deploy.yml`, which builds and deploys to GitHub Pages. Two environment variables control the output:
+Pushes to `main` auto-deploy on Vercel. Two environment variables control the output:
 
-- `SITE_URL`: absolute site URL (production default `https://www.truepdf.com`)
-- `BASE_PATH`: subpath the site is served from (e.g. `/truepdf/` for GitHub Pages testing)
+- `SITE_URL`: absolute site URL (default `https://www.truepdf.com`)
+- `BASE_PATH`: subpath the site is served from, ending in `/` (default `/`)
 
-Always push the source tree, never `dist/`. The tree-push helper replaces the whole branch, so verify `.github/workflows/deploy.yml` still exists after pushing.
+Always push the source tree, never `dist/`.
 
 ## Analytics
 
-Usage stats are off by default. To enable them:
-
-1. Create a free site at [GoatCounter](https://www.goatcounter.com/) (cookieless, GDPR-friendly, no personal data collected).
-2. Set `ANALYTICS_CODE` in `src/lib/site.ts` to your GoatCounter site code (the `xxxx` in `xxxx.goatcounter.com`).
-3. Rebuild and deploy.
+Pageview analytics use GoatCounter (cookieless, no personal data). The site code is set in `src/lib/site.ts` (`ANALYTICS_CODE`); empty it to disable analytics entirely.
 
 Pageviews are then counted per tool page, which shows which tools get used. No events, no fingerprinting.
 
