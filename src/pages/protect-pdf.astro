@@ -1,0 +1,109 @@
+---
+import ToolPage from '../layouts/ToolPage.astro';
+import Icon from '../components/Icon.astro';
+
+const title = 'Protect PDF Free — Add Password Online, No Signup, Files Stay on Device';
+const description =
+  'Add password protection to a PDF for free, right in your browser. AES encryption, restrict printing or copying. No signup, no watermark.';
+const h1 = 'Protect PDF';
+const lede = 'Lock a PDF with a password. AES encryption, optional printing and copying restrictions. Free, no account.';
+---
+<ToolPage
+  title={title}
+  description={description}
+  h1={h1}
+  lede={lede}
+  crumbs={[{ label: 'PDF tools', href: '/pdf-tools' }, { label: 'Protect PDF', href: '/protect-pdf' }]}
+  toolName="TruePDF Protect PDF"
+  intro={[
+    'Password-protecting a PDF is the simplest way to keep a sensitive document from being opened by the wrong person: a contract you are emailing, a report with personal data, or anything you would rather not leave readable on a shared drive. Most online tools that add a password want you to upload the file first, which defeats the purpose.',
+    'This tool encrypts your PDF on your device with AES encryption, the same standard banks and governments use. Choose whether the password is needed just to open the file, or also to restrict printing and copying. The first run downloads a small encryption engine (one-time); the encryption itself happens on your device.',
+    'Everything happens in your browser. Your file is read into memory, encrypted there, and the protected copy is generated there too. Nothing is uploaded anywhere.',
+  ]}
+  steps={[
+    'Drop your PDF onto the box above, or tap it to browse.',
+    'Type a password (twice, to confirm it). Pick a longer one; the tool shows a strength hint.',
+    'Choose the protection mode: require the password to open, or also restrict printing and copying.',
+    'Tap "Protect PDF". Download the encrypted file.',
+  ]}
+  specs={[
+    ['Cost', 'Free, no limits'],
+    ['Signup', 'None. No account, no email.'],
+    ['Watermark', 'None'],
+    ['Where files are processed', 'In your browser, on your device'],
+    ['Encryption', 'AES, via a Python engine running in your browser'],
+    ['Modes', 'Open password, or open password plus no-copy / view-only restrictions'],
+  ]}
+  faqs={[
+    {
+      q: 'Are my PDFs uploaded to a server?',
+      a: 'No. The first run downloads a small encryption engine (about 15 MB, cached afterwards), but your PDF is read into your browser memory, encrypted there, and the protected copy is generated there too. Nothing leaves your device.',
+    },
+    {
+      q: 'What encryption does it use?',
+      a: 'AES encryption through the pypdf library running in your browser via WebAssembly. This is the same encryption standard used across the PDF ecosystem.',
+    },
+    {
+      q: 'What is the difference between the protection modes?',
+      a: '"Open password" requires the password to view the file at all. The stricter modes also set the PDF permission flags that tell readers to block printing or text copying. Note that permission flags are honored by well-behaved readers but are not as strong as the open password itself.',
+    },
+    {
+      q: 'Can I remove the password later?',
+      a: 'Yes, with the Unlock PDF tool, as long as you know the password.',
+    },
+    {
+      q: 'What makes a good PDF password?',
+      a: 'Length matters more than complexity. A password of 12 or more characters, ideally a few random words strung together, resists guessing far better than an 8-character mix of symbols.',
+    },
+  ]}
+>
+  <section class="tool-card" slot="tool" aria-label="Protect PDF tool">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Add a PDF file to protect">
+      <div class="dz-icon"><Icon name="lock" size={30} /></div>
+      <div class="dz-title">Drop your PDF here</div>
+      <div class="dz-sub">or tap to choose a file &middot; it stays on your device</div>
+    </div>
+    <input type="file" id="file-input" accept="application/pdf,.pdf" hidden />
+    <div id="error-box" class="error-box" hidden></div>
+    <p id="file-label" class="count-label" role="status"></p>
+    <div class="field">
+      <label for="pass-input">Password</label>
+      <input type="password" id="pass-input" autocomplete="new-password" placeholder="Choose a password" />
+      <p id="pw-hint" class="hint"></p>
+    </div>
+    <div class="field">
+      <label for="confirm-input">Confirm password</label>
+      <input type="password" id="confirm-input" autocomplete="new-password" placeholder="Type it again" />
+    </div>
+    <div class="field">
+      <label>Protection mode</label>
+      <div class="radio-cards" role="radiogroup" aria-label="Protection mode">
+        <label class="radio-card">
+          <input type="radio" name="protect-mode" value="open" checked />
+          <span><strong>Open password</strong><small>Password needed to view the file.</small></span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="protect-mode" value="nocopy" />
+          <span><strong>No copying</strong><small>Password to open; copying text is blocked.</small></span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="protect-mode" value="viewonly" />
+          <span><strong>View only</strong><small>Password to open; printing and copying are blocked.</small></span>
+        </label>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button id="protect-btn" class="btn" type="button" disabled>Protect PDF</button>
+    </div>
+    <p id="engine-status" class="hint" role="status" aria-live="polite"></p>
+    <div id="result" class="result" hidden>
+      <h3>Protected</h3>
+      <p id="result-info"></p>
+      <button id="download-btn" class="btn" type="button">Download PDF</button>
+    </div>
+  </section>
+  <script>
+    import { initProtectPdf } from '../tools/protect-pdf';
+    initProtectPdf();
+  </script>
+</ToolPage>

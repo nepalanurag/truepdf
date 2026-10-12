@@ -1,0 +1,130 @@
+---
+import ToolPage from '../layouts/ToolPage.astro';
+import Icon from '../components/Icon.astro';
+
+const title = 'Split PDF Free — Extract Pages Online, No Signup, Files Stay on Device';
+const description =
+  'Split a PDF into multiple files for free, right in your browser. Extract page ranges, every page, or split by bookmarks. No signup, no watermark.';
+const h1 = 'Split PDF files';
+const lede = 'Pull pages out of a PDF: by page range, every page separately, or by the document\u2019s own chapters. Free, no account.';
+---
+<ToolPage
+  title={title}
+  description={description}
+  h1={h1}
+  lede={lede}
+  crumbs={[{ label: 'PDF tools', href: '/pdf-tools' }, { label: 'Split PDF', href: '/split-pdf' }]}
+  toolName="TruePDF Split PDF"
+  intro={[
+    'Splitting a PDF comes up more often than you would think: pulling one chapter out of a long report, separating scanned pages into individual files, or extracting just the pages you need to send someone. Most online splitters want you to upload the whole document first.',
+    'This tool splits your PDF on your device. Pick pages visually from thumbnails, type page ranges like "1-3, 5", split every page into its own file, or let the tool split by the document\u2019s own bookmarks when it has a table of contents. Download the parts individually or all at once as a ZIP.',
+    'Everything happens in your browser. Your file is read into memory, the parts are generated there, and nothing is uploaded anywhere.',
+  ]}
+  steps={[
+    'Drop your PDF onto the box above, or tap it to browse.',
+    'Choose how to split: pick pages from thumbnails, type ranges, split every page, split into chunks, or split by bookmarks.',
+    'Tap the split button for your chosen method.',
+    'Download the parts individually, or grab them all as a ZIP.',
+  ]}
+  specs={[
+    ['Cost', 'Free, no limits'],
+    ['Signup', 'None. No account, no email.'],
+    ['Watermark', 'None'],
+    ['Where files are processed', 'In your browser, on your device'],
+    ['Split methods', 'Page ranges, visual page picker, every page, fixed-size chunks, bookmarks, text search'],
+    ['Output', 'One PDF per part; download individually or as a ZIP'],
+  ]}
+  faqs={[
+    {
+      q: 'Are my PDFs uploaded to a server?',
+      a: 'No. The splitting happens entirely in your browser. Your file never leaves your device.',
+    },
+    {
+      q: 'How do I write page ranges?',
+      a: 'Use numbers and dashes: "1-3" for pages 1 through 3, "5" for just page 5, and commas to combine them: "1-3, 5, 8-10".',
+    },
+    {
+      q: 'What does "split by bookmarks" do?',
+      a: 'If your PDF has a table of contents (bookmarks), the tool reads it and splits the document at each chapter boundary, so each chapter becomes its own file.',
+    },
+    {
+      q: 'Can I split a password-protected PDF?',
+      a: 'No. Encrypted PDFs cannot be opened without the password. Unlock it first with the Unlock PDF tool, then split the unlocked file.',
+    },
+    {
+      q: 'Will the split files keep the original quality?',
+      a: 'Yes. Pages are copied directly, not re-rendered. Text stays selectable and images keep their resolution.',
+    },
+  ]}
+>
+  <section class="tool-card" slot="tool" aria-label="Split PDF tool">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Add a PDF file to split">
+      <div class="dz-icon"><Icon name="upload" size={30} /></div>
+      <div class="dz-title">Drop a PDF here</div>
+      <div class="dz-sub">or tap to choose a file &middot; it stays on your device</div>
+    </div>
+    <input type="file" id="file-input" accept="application/pdf,.pdf" hidden />
+    <div id="error-box" class="error-box" hidden></div>
+    <p id="file-info" class="count-label" hidden></p>
+
+    <div id="picker-wrap" class="field" hidden>
+      <label>Pick pages <span id="pick-count" class="count-label"></span></label>
+      <div class="btn-row" style="margin-bottom: 8px;">
+        <button id="pick-all" class="btn btn-secondary btn-small" type="button">Select all</button>
+        <button id="pick-none" class="btn btn-secondary btn-small" type="button">Select none</button>
+        <button id="extract-btn" class="btn btn-small" type="button" disabled>Extract selected pages</button>
+      </div>
+      <div id="page-grid" class="page-grid"></div>
+    </div>
+
+    <div class="field">
+      <label for="range-input">Page ranges</label>
+      <input type="text" id="range-input" placeholder="e.g. 1-3, 5" style="max-width: 320px" />
+      <div class="btn-row" style="margin-top: 8px;">
+        <button id="split-btn" class="btn" type="button" disabled>Split by ranges</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Quick splits</label>
+      <div class="btn-row">
+        <button id="every-page-btn" class="btn btn-secondary" type="button" disabled>Split every page</button>
+      </div>
+      <div class="field" style="margin-top: 8px;">
+        <label for="chunk-size">Pages per file</label>
+        <div class="btn-row">
+          <input type="number" id="chunk-size" min="1" value="5" style="max-width: 100px" disabled />
+          <button id="chunk-btn" class="btn btn-secondary" type="button" disabled>Split into chunks</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="smart-split" class="field" hidden>
+      <label>Smart split</label>
+      <p id="bookmark-status" class="hint"></p>
+      <div id="chapter-list" hidden></div>
+      <div class="btn-row" style="margin-top: 8px;">
+        <button id="bookmarks-btn" class="btn btn-secondary" type="button" disabled>Split by bookmarks</button>
+      </div>
+      <div class="field" style="margin-top: 8px;">
+        <label for="text-split-input">Split on text</label>
+        <div class="btn-row">
+          <input type="text" id="text-split-input" placeholder='e.g. "Invoice"' style="max-width: 220px" disabled />
+          <button id="text-split-btn" class="btn btn-secondary" type="button" disabled>Split</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="result" class="result" hidden>
+      <h3>Split complete</h3>
+      <ul id="result-list" class="file-list"></ul>
+      <div class="btn-row" style="margin-top: 12px;">
+        <button id="zip-btn" class="btn" type="button" hidden>Download all as ZIP</button>
+      </div>
+    </div>
+  </section>
+  <script>
+    import { initSplitPdf } from '../tools/split-pdf';
+    initSplitPdf();
+  </script>
+</ToolPage>

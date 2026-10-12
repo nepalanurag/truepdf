@@ -1,0 +1,87 @@
+---
+import ToolPage from '../layouts/ToolPage.astro';
+import Icon from '../components/Icon.astro';
+
+const title = 'Merge PDF Free — Combine PDFs Online, No Signup, Files Stay on Device';
+const description =
+  'Merge multiple PDFs into one file for free, right in your browser. Drag to reorder, preview pages, download the combined PDF. No signup, no watermark.';
+const h1 = 'Merge PDF files';
+const lede = 'Combine multiple PDFs into one document. Drag to reorder, preview each file, download the merged result. Free, no account.';
+---
+<ToolPage
+  title={title}
+  description={description}
+  h1={h1}
+  lede={lede}
+  crumbs={[{ label: 'PDF tools', href: '/pdf-tools' }, { label: 'Merge PDF', href: '/merge-pdf' }]}
+  toolName="TruePDF Merge PDF"
+  intro={[
+    'Merging PDFs is one of those small jobs that comes up constantly: combining scanned pages into one document, joining chapters of a report, or putting a cover page in front of a contract. Most online mergers ask you to upload your files first, which is a strange trade for documents you might not want on someone else\u2019s server.',
+    'This tool merges your PDFs on your device. Drop in as many files as you like, drag them into the order you want, and download a single combined PDF. The pages are copied exactly as they are: same quality, same text, same links.',
+    'Everything happens in your browser. Your files are read into memory, combined there, and the result is generated there too. Nothing is uploaded anywhere.',
+  ]}
+  steps={[
+    'Drop your PDFs onto the box above, or tap it to browse. Add as many as you like.',
+    'Drag the files into the order you want them merged, or use the up/down buttons.',
+    'Tap "Merge PDFs". Each file shows its page count and a thumbnail preview.',
+    'Download the combined PDF.',
+  ]}
+  specs={[
+    ['Cost', 'Free, no limits'],
+    ['Signup', 'None. No account, no email.'],
+    ['Watermark', 'None'],
+    ['Where files are processed', 'In your browser, on your device'],
+    ['File limit', 'No limit; add as many PDFs as you like'],
+    ['Page quality', 'Unchanged. Pages are copied exactly, not re-rendered.'],
+    ['Output filename', 'merged-N-files.pdf, or based on the single file name'],
+  ]}
+  faqs={[
+    {
+      q: 'Are my PDFs uploaded to a server?',
+      a: 'No. The merging happens entirely in your browser using a PDF library that runs on your device. Your files never leave your device.',
+    },
+    {
+      q: 'Will the merged PDF keep the original quality?',
+      a: 'Yes. Pages are copied directly from each source file, not re-rendered. Text stays selectable, images keep their resolution, and links keep working.',
+    },
+    {
+      q: 'Can I merge password-protected PDFs?',
+      a: 'No. Encrypted PDFs cannot be opened without the password. Unlock them first with the Unlock PDF tool, then merge the unlocked files.',
+    },
+    {
+      q: 'Is there a limit on how many PDFs I can merge?',
+      a: 'No artificial limit. The practical limit is your device memory; typical documents merge in seconds.',
+    },
+    {
+      q: 'Can I change the page order after merging?',
+      a: 'Reorder before you merge using drag and drop or the up/down buttons. If you need to reorder pages within a single PDF, use the PDF Editor instead.',
+    },
+  ]}
+>
+  <section class="tool-card" slot="tool" aria-label="Merge PDF tool">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Add PDF files to merge">
+      <div class="dz-icon"><Icon name="upload" size={30} /></div>
+      <div class="dz-title">Drop PDFs here</div>
+      <div class="dz-sub">or tap to choose files &middot; they stay on your device</div>
+    </div>
+    <input type="file" id="file-input" accept="application/pdf,.pdf" multiple hidden />
+    <div id="error-box" class="error-box" hidden></div>
+    <p id="empty-state" class="count-label">No files yet. Add two or more PDFs to combine them.</p>
+    <ul id="file-list" class="file-list"></ul>
+    <p id="count-label" class="count-label"></p>
+    <div class="btn-row">
+      <button id="clear-all-btn" class="btn btn-secondary" type="button" hidden>Clear all</button>
+      <button id="merge-btn" class="btn" type="button" disabled>Merge PDFs</button>
+    </div>
+    <div id="result" class="result" hidden>
+      <h3>Merged</h3>
+      <p id="result-info"></p>
+      <div id="preview-wrap" class="pdf-preview-wrap" hidden></div>
+      <button id="download-btn" class="btn" type="button">Download PDF</button>
+    </div>
+  </section>
+  <script>
+    import { initMergePdf } from '../tools/merge-pdf';
+    initMergePdf();
+  </script>
+</ToolPage>
